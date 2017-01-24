@@ -27,6 +27,27 @@ namespace Source {
 
             }
         }
+        public static Char[,] toMatrix(String matrixRaw)
+        {
+
+            String[] lines = matrixRaw.Split('\n');
+            char[,] blocks = new char[lines.Length - 1, lines[0].Length];
+            int row = 0, col = 0;
+            foreach (string line in lines)
+            {
+                col = 0;
+                foreach (char charac in line.ToCharArray())
+                {
+                    blocks[row, col] = charac;
+                    col++;
+                }
+
+                row++;
+
+            }
+            return blocks;
+
+        }
 
         public static string Inverse(char[,] matrix, int v1, int v2)
         {
@@ -44,5 +65,6 @@ namespace Source {
             return s;
            
         }
+       
     }
 }

@@ -51,7 +51,7 @@ namespace Source
         {
             this.tetromino = _tetromino;
         }
-
+        
         public Position getPosition()
         {
             return position;

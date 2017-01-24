@@ -38,15 +38,25 @@ namespace Source
             if (currentPiece != null && currentPiece.canMoveTo(this, new Position(0, -1)))
                 currentPiece.position.col--;
         }
+        private static int StartingRowOffset(Grid shape)
+        {
+            for (int r = 0; r < shape.Rows(); r++)
+            {
+                for (int c = 0; c < shape.Columns(); c++)
+                {
+                    if (shape.CellAt(r, c) != '.') return -r;
+                }
+            }
+            return 0;
+        }
 
-        
 
         public void Drop(Grid block)
         {
             if (IsFallingBlock() == false)
             {
                 currentPiece = new MovableGrid(block);
-                currentPiece.SetPosition(StartingRowOffset(currentPiece.tetromino), this.columns / 2 - currentPiece.tetromino.Columns() / 2);
+                currentPiece.SetPosition(StartingRowOffset(block), this.columns / 2 - currentPiece.tetromino.Columns() / 2);
             } else
             {
                 throw new ArgumentException("A block is already falling.");
@@ -81,19 +91,7 @@ namespace Source
                 }
             }
         }
-
-        static int StartingRowOffset(Grid shape)
-        {
-            for (int r = 0; r < shape.Rows(); r++)
-            {
-                for (int c = 0; c < shape.Columns(); c++)
-                {
-                    if (shape.CellAt(r, c) != '.') return -r;
-                }
-            } 
-            return 0;
-        }
-
+        
         public void FromString(string v)
         {
             throw new NotImplementedException();
@@ -128,8 +126,6 @@ namespace Source
                         if (currentPiece.CurrentPieceInGrid(rowShape, colShape))
                         {
                             s += currentPiece.tetromino.CellAt(rowShape, colShape);
-
-
                         }
                         else
                         {

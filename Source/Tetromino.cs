@@ -9,26 +9,26 @@ namespace Source
     public class Tetromino : Grid
     {
         int currentRotation = 0;
-        String[] rotations;
-        public Piece[] pieces;
+        private Piece[] pieces;
 
-        public static Tetromino T_SHAPE = new Tetromino(0, 
+        public static Tetromino T_SHAPE = new Tetromino(0,
                 "....\n" +
                 "TTT.\n" +
                 ".T..\n"
+            ,
+                ".T..\n" +
+                "TT..\n" +
+                ".T..\n"
+            ,
+                "....\n" +
+                ".T..\n" +
+                "TTT.\n"
+            ,
+                ".T..\n" +
+                ".TT.\n" +
+                ".T..\n"
             );
 
-        public Tetromino(String rotation1, String rotation2, String  rotation3 , String rotation4)
-        {
-            rotations = new string[]{ rotation1, rotation2, rotation3, rotation4};
-        }
-
-        public Tetromino(Piece[] _pieces)
-        {
-            this.pieces = _pieces;
-        }
-
-        // unknown number of string parameters for orientations
         public Tetromino(int _currentRotation, params string[] orientations)
         {
             this.pieces = new Piece[orientations.Length];
@@ -40,25 +40,21 @@ namespace Source
             }
         }
 
-        /*public Tetromino(int _currentRotation, string[] _rotations)
+        public Tetromino(int _currentRotation, Piece[] _rotations)
         {
-            rotations = _rotations;
+            pieces = _rotations;
             currentRotation = _currentRotation;
-        }*/
-
-        public override string ToString()
-        {
-            return rotations[currentRotation];
         }
+
 
         public Tetromino RotateRight()
         {
-            return new Tetromino((currentRotation + 1) % rotations.Length,this.rotations);
+            return new Tetromino((currentRotation + 1) % pieces.Length,this.pieces);
         }
 
         public Tetromino RotateLeft()
         {
-            return new Tetromino((currentRotation + -1 + rotations.Length) % rotations.Length, this.rotations);
+            return new Tetromino((currentRotation + -1 + pieces.Length) % pieces.Length, this.pieces);
         }
 
         private int mod(int a, int n)
@@ -73,18 +69,24 @@ namespace Source
 
         public int Rows()
         {
-            return pieces.GetLength(0);
+            return pieces[currentRotation].Rows();
         }
 
         public int Columns()
         {
-            return pieces.GetLength(1);
+            return pieces[currentRotation].Columns();
         }
 
         public char CellAt(int row, int col)
         {
-            return 'A';
-            // TODO
+            return pieces[currentRotation].CellAt(row,col);
         }
+
+
+        public override string ToString()
+        {
+            return pieces[currentRotation].ToString();
+        }
+
     }
 }

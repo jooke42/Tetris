@@ -13,24 +13,6 @@ namespace Test
 
         Tetromino CreateTshape()
         {
-            /*return new Tetromino(
-                "....\n" +
-                "TTT.\n" +
-                ".T..\n"
-            ,
-                ".T..\n" +
-                "TT..\n" +
-                ".T..\n"
-            ,
-                "....\n" +
-                ".T..\n" +
-                "TTT.\n"
-            ,
-                ".T..\n" +
-                ".TT.\n" +
-                ".T..\n"
-            );*/
-
             return Tetromino.T_SHAPE;
         }
 

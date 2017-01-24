@@ -16,30 +16,32 @@ namespace Source
 
     public class Piece : Grid
     {
-        StringToMatrix sToM;
+        private int offsetRow;
+        char[,] grid;
         public Piece(string blockraw)
         {
-            sToM = new StringToMatrix(blockraw);
+            grid = StringToMatrix.toMatrix(blockraw);
         }
         public char CellAt(int row, int col)
         {
-            return sToM.blocks[row,col];
+            return grid[row, col];
         }
 
         public int Columns()
         {
-            return sToM.blocks.GetLength(1);
+            return grid.GetLength(1);
         }
 
         public int Rows()
         {
-            return sToM.blocks.GetLength(0);
+            return grid.GetLength(0);
         }
 
         
+
         public override string ToString()
         {
-            return sToM.ToString();
+            return StringToMatrix.Inverse(grid,Rows(),Columns());
         }
     }
 }
