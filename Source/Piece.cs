@@ -12,17 +12,14 @@ namespace Source
         int Rows();
         int Columns();
         char CellAt(int row, int col);
-
-
     }
+
     public class Piece : Grid
     {
         StringToMatrix sToM;
         public Piece(string blockraw)
         {
             sToM = new StringToMatrix(blockraw);
-
-           
         }
         public char CellAt(int row, int col)
         {
@@ -33,8 +30,6 @@ namespace Source
         {
             return sToM.blocks.GetLength(1);
         }
-
- 
 
         public int Rows()
         {

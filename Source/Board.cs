@@ -6,63 +6,48 @@ using System.Threading.Tasks;
 
 namespace Source
 {
-    public class Board
+    public class Board : Grid
     {
         readonly int rows;
         readonly int columns;
-        Char[][] board;
+        Char[,] board;
         MovableGrid currentPiece = null;
 
         public Board(int rows, int columns)
         {
             this.rows = rows;
             this.columns = columns;
-            board = new  char[rows][];
-            for(int i=0;i< rows;i++)
+            board = new char[rows, columns];
+
+            for(int i=0; i < rows; i++)
             {
-                board[i] = new char[columns];
                 for (int j = 0; j < columns; j++)
                 {
-                    board[i][j] = '.';
+                    board[i, j] = '.';
                 }
             }
         }
 
-        public override String ToString()
+        public void MoveDown()
         {
-            String s = "";
-            int row = 0, col = 0;
-            while (row < rows)
-            {
-                while (col < columns)
-                {
-                    if(currentPiece.position.row == row && currentPiece.position.col == col)
-                    {
-                        s += currentPiece.tetromino.CellAt(row + StartingRowOffset(currentPiece.tetromino), 0);
-                       
-                    }
-                    else
-                    {
-                        s += board[row][col];
-                    }
-                    
-
-
-                    col++;
-                }
-                s += "\n";
-                row++;
-            }
-            return s;
+            if (currentPiece != null && currentPiece.canMoveTo(this,new Position(1,0)))
+                currentPiece.position.row++;
         }
+        public void MoveLeft()
+        {
+            if (currentPiece != null && currentPiece.canMoveTo(this, new Position(0, -1)))
+                currentPiece.position.col--;
+        }
+
+        
+
         public void Drop(Grid block)
         {
             if (IsFallingBlock() == false)
             {
                 currentPiece = new MovableGrid(block);
                 currentPiece.SetPosition(StartingRowOffset(currentPiece.tetromino), this.columns / 2 - currentPiece.tetromino.Columns() / 2);
-                
-            }else
+            } else
             {
                 throw new ArgumentException("A block is already falling.");
             }  
@@ -70,22 +55,33 @@ namespace Source
 
         public bool IsFallingBlock()
         {
-            return currentPiece!=null && currentPiece.isfalling;
+            return currentPiece!=null ;
         }
 
         public void Tick()
         {
-            if (!currentPiece.CanFall(this.board))
-                  currentPiece.isfalling = false;
-            if (currentPiece.isfalling)
-                currentPiece.SetPosition(currentPiece.getPosition().row + 1, currentPiece.getPosition().col);
-            
+            if (currentPiece.canMoveTo(this,new Position(1,0)) == false)
+            {
+                addCurrentShapeToBoard();
+                currentPiece = null;
+            }
+            if (IsFallingBlock())
+                MoveDown();            
         }
-        void movedown(Position x)
+        
+
+        private void addCurrentShapeToBoard()
         {
-            board[x.row + 1][x.col] = board[x.row][x.col];
-            board[x.row][x.col] = '.';
+            for (int r = 0; r < currentPiece.Rows(); r++)
+            {
+                for (int c = 0; c < currentPiece.Columns(); c++)
+                {
+                    if (currentPiece.CellAt(r, c) != '.')
+                        board[currentPiece.position.row + r,currentPiece.position.col + c] = currentPiece.CellAt(r, c);
+                }
+            }
         }
+
         static int StartingRowOffset(Grid shape)
         {
             for (int r = 0; r < shape.Rows(); r++)
@@ -97,6 +93,60 @@ namespace Source
             } 
             return 0;
         }
+
+        public void FromString(string v)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Rows()
+        {
+            return this.rows;
+        }
+
+        public int Columns()
+        {
+            return this.columns;
+        }
+
+        public char CellAt(int row, int col)
+        {
+            return board[row, col];
+        }
+
+        public override String ToString()
+        {
+            String s = "";
+            for (int row = 0; row < rows; row++)
+            {
+                for (int col = 0; col < columns; col++)
+                {
+                    if (currentPiece != null)
+                    {
+                        int rowShape = currentPiece.toRowShape(row);
+                        int colShape = currentPiece.toColShape(col);
+                        if (currentPiece.CurrentPieceInGrid(rowShape, colShape))
+                        {
+                            s += currentPiece.tetromino.CellAt(rowShape, colShape);
+
+
+                        }
+                        else
+                        {
+                            s += board[row,col];
+                        }
+                    }
+                    else
+                    {
+                        s += board[row,col];
+                    }
+                }
+                s += "\n";
+            }
+            return s;
+        }
+
+        
     }
 
 }
