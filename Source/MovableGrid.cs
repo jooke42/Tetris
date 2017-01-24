@@ -14,15 +14,41 @@ namespace Source
             col = _col;
             row = _row;
         }
+
+        public override bool Equals(Object obj)
+        {
+            return obj is Position && this == (Position)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return row.GetHashCode() ^ col.GetHashCode();
+        }
+
+        public static bool operator ==(Position x, Position y)
+        {
+            return x.col== y.col && x.row == y.row;
+        }
+        public static bool operator !=(Position x, Position y)
+        {
+            return !(x == y);
+        }
+        public static Position operator +(Position x, Position y)
+        {
+            return new Position(x.row + y.row, x.col + y.col);
+        }
+        public static Position operator -(Position x, Position y)
+        {
+            return new Position(x.row - y.row, x.col -y.col);
+        }
     }
-    class MovableGrid
+    class MovableGrid : Grid
     {
         public Grid tetromino;
         public Position position;
-        public bool isfalling;
-        public MovableGrid(Grid _tetromino, bool isfalling = true)
+
+        public MovableGrid(Grid _tetromino)
         {
-            this.isfalling = isfalling;
             this.tetromino = _tetromino;
         }
 
@@ -37,26 +63,58 @@ namespace Source
             position.row = _row;
         }
 
-        public bool CanFall(char[][] board)
+        public bool canMoveTo(Board board, Position offset)
         {
-            
-                for (int r = 0; r < this.tetromino.Rows(); r++)
+            Position nextPosition = this.position + offset;
+
+            for (int r = 0; r < this.tetromino.Rows(); r++)
+            {
+                for (int c = 0; c < this.tetromino.Columns(); c++)
                 {
-                    for (int c = 0; c < this.tetromino.Columns(); c++)
-                    {
-                    if (this.tetromino.CellAt(r, c) != '.' && board[this.position.row + r + 1][this.position.col + c] != '.')
+                    if (r + nextPosition.row >= board.Rows() || r + nextPosition.row <0)
                         return false;
-                    if (this.position.row + r + 1 >= board.Length)
+
+                    if (c + nextPosition.col >= board.Columns() || c + nextPosition.col <0)
                         return false;
-   
-                    }
+
+                    if (this.tetromino.CellAt(r, c) != '.' && board.CellAt(nextPosition.row  + r,nextPosition.col + c) != '.')
+                        return false;
                 }
-            return true;
             }
+            return true;
         }
-    public bool InGrid(int row, int col)
-    {
-        return 
+
+        public int Rows()
+        {
+            return tetromino.Rows();
+        }
+
+        public int Columns()
+        {
+            return tetromino.Columns();
+        }
+
+        public char CellAt(int row, int col)
+        {
+            return tetromino.CellAt(row, col);
+        }
+
+        public int toRowShape(int boardRow)
+        {
+            return boardRow - this.position.row;
+        }
+
+        public int toColShape(int boardCol)
+        {
+            return boardCol - this.position.col;
+        }
+
+        //check if coord board is inGrid of shape
+        public bool CurrentPieceInGrid(int shapeRow, int shapeCol)
+        {
+            return (shapeCol >= 0 && shapeCol < this.Columns()) && (shapeRow >= 0 && shapeRow < this.Rows());
+        }
     }
+    
 
 }
